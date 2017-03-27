@@ -55,6 +55,8 @@ public class MainClass {
 				case "4":
 					handleDeleteTable();
 					break;
+				case "5":
+					handleSetSchema();
 				default:
 					System.out.println("Optiunea introdusa nu exista!\n");
 				}
@@ -74,6 +76,18 @@ public class MainClass {
 		inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
 
+	private static void handleSetSchema() throws IOException {
+		String line = br.readLine();
+		if (matchesPattern(Patterns.SET_SCHEMA.getPattern(), line)) {
+			outToServer.writeBytes(line+"\n");
+			String response = inFromServer.readLine();
+			System.out.println(response +"\n");
+		} else {
+			System.out.println("Sintaxa gresita!");
+		}
+		
+	}
+	
 	private static void handleDeleteTable() throws IOException {
 		System.out.println("Introduceti comanda de stergere a tabelului!\n");
 		String line = br.readLine();
@@ -122,7 +136,7 @@ public class MainClass {
 			System.out.println(response +"\n");
 			
 		} else {
-			System.out.println("Sintaxa gresita!\n");
+			System.out.println("Please verify your query!\n");
 		}
 
 	}
