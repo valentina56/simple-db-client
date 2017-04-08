@@ -33,6 +33,7 @@ public class MainClass {
 		while (run) {
 			try {
 				line = br.readLine();
+				line = line.toUpperCase();
 				tokens = line.split(" +");
 				String option = tokens[0] + (tokens.length > 1 ? " " + tokens[1] : "");
 				switch (option) {
@@ -57,6 +58,12 @@ public class MainClass {
 					break;
 				case "CREATE INDEX":
 					handleRequest(Patterns.CREATE_INDEX, line);
+					break;
+				case "INSERT":
+					handleRequest(Patterns.INSERT_ROW, line);
+					break;
+				case "DELETE":
+					handleRequest(Patterns.DELETE_ROW, line);
 					break;
 				case "HELP":
 					displayHelp();

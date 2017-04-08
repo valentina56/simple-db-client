@@ -8,8 +8,9 @@ public enum Patterns {
 	CREATE_TABLE("^CREATE TABLE [A-Z_a-z]+ +\\([A-Z_a-z0-9]+ *(?:CHAR\\([1-9]+[0-9]*\\)|NUMBER)+( NOT NULL)?(?: PRIMARY KEY| UNIQUE)?( *, *[A-Z_a-z0-9]+ (?:CHAR\\([1-9]+[0-9]*\\)|NUMBER)( NOT NULL)?(?: PRIMARY KEY| UNIQUE)?)*\\)$"),
 	DROP_TABLE("^DROP TABLE [A-Z_a-z]+.[A-Z_a-z]+$"),
 	SET_SCHEMA("^SET SCHEMA [A-Z_a-z0-9]+$"),
-	CREATE_INDEX("^CREATE *(UNIQUE)? INDEX [A-Z_a-z]+ ON [A-Z_a-z]+ +\\( *[A-Z_a-z]+ *(, *[A-Z_a-z]+ *)*\\)$");
-	
+	CREATE_INDEX("^CREATE *(UNIQUE)? INDEX [A-Z_a-z]+ ON [A-Z_a-z]+ +\\( *[A-Z_a-z]+ *(, *[A-Z_a-z]+ *)*\\)$"),
+	INSERT_ROW(".*"),
+	DELETE_ROW(".*");
 	private String pattern;
 	private Patterns(String pattern){
 		this.pattern = pattern;
