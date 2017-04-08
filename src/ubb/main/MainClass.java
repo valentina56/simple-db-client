@@ -6,10 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import ubb.util.LastMatch;
 import ubb.util.Patterns;
 
 public class MainClass {
@@ -25,45 +24,49 @@ public class MainClass {
 		try {
 			initializeSocket();
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Could not find host: " + e1.getMessage());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Could not open Soket: " + e1.getMessage());
 		}
-		String option;
+		String line;
+		String[] tokens;
 		while (run) {
-			displayMenu();
-
 			try {
-				option = br.readLine();
-
+				line = br.readLine();
+				tokens = line.split(" +");
+				String option = tokens[0] + (tokens.length > 1 ? " " + tokens[1] : "");
 				switch (option) {
-				case "0":
+				case "EXIT":
 					run = false;
 					socket.close();
 					break;
-				case "1":
-					handleCreateDabase();
+				case "CREATE DATABASE":
+					handleRequest(Patterns.CREATE_DB, line);
 					break;
-				case "2":
-					handleDeleteDatabase();
+				case "DROP DATABASE":
+					handleRequest(Patterns.DROP_DB, line);
 					break;
-				case "3":
-					handleCreateTable();
+				case "CREATE TABLE":
+					handleRequest(Patterns.CREATE_TABLE, line);
 					break;
-				case "4":
-					handleDeleteTable();
+				case "DROP TABLE":
+					handleRequest(Patterns.DROP_TABLE, line);
 					break;
-				case "5":
-					handleSetSchema();
+				case "SET SCHEMA":
+					handleRequest(Patterns.SET_SCHEMA, line);
+					break;
+				case "CREATE INDEX":
+					handleRequest(Patterns.CREATE_INDEX, line);
+					break;
+				case "HELP":
+					displayHelp();
+					break;
 				default:
-					System.out.println("Optiunea introdusa nu exista!\n");
+					System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
+					break;
 				}
-
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Communication with server is broken: " + e.getMessage());
 			}
 
 		}
@@ -75,80 +78,27 @@ public class MainClass {
 		outToServer = new DataOutputStream(socket.getOutputStream());
 		inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
-
-	private static void handleSetSchema() throws IOException {
-		String line = br.readLine();
-		if (matchesPattern(Patterns.SET_SCHEMA.getPattern(), line)) {
-			outToServer.writeBytes(line+"\n");
-			String response = inFromServer.readLine();
-			System.out.println(response +"\n");
-		} else {
-			System.out.println("Sintaxa gresita!");
-		}
-		
-	}
 	
-	private static void handleDeleteTable() throws IOException {
-		System.out.println("Introduceti comanda de stergere a tabelului!\n");
-		String line = br.readLine();
-		if (matchesPattern(Patterns.DROP_TABLE.getPattern(), line)) {
-			outToServer.writeBytes(line+"\n");
+	private static void handleRequest(Patterns pattern, String line) throws IOException {
+		if(matchesPattern(pattern.getPattern(), line)){
+			outToServer.writeBytes(line + '\n');
 			String response = inFromServer.readLine();
-			System.out.println(response +"\n");
-		} else {
-			System.out.println("Sintaxa gresita!");
-		}
-
-	}
-
-	private static void handleCreateTable() throws IOException {
-		System.out.println("Introduceti comanda de creare a tabelului!\n");
-		String line = br.readLine();
-		if (matchesPattern(Patterns.CREATE_TABLE.getPattern(), line)) {
-			outToServer.writeBytes(line+"\n");
-			String response = inFromServer.readLine();
-			System.out.println(response +"\n");
-			
-		} else {
-			System.out.println("Sintaxa gresita!");
+			System.out.println(response + '\n');
+		}else{
+			int errorIndex = LastMatch.indexOfLastMatch(pattern.getPattern(), line);
+			System.out.println("Error at index: " + errorIndex);
+			System.out.println(line.substring(errorIndex));
 		}
 	}
 
-	private static void handleDeleteDatabase() throws IOException {
-		System.out.println("Introduceti comanda de stergere a bazei de date!\n");
-		String line = br.readLine();
-		if (matchesPattern(Patterns.DROP_DB.getPattern(), line)) {
-			outToServer.writeBytes(line+"\n");
-			String response = inFromServer.readLine();
-			System.out.println(response +"\n");
-		} else {
-			System.out.println("Sintaxa gresita!");
-		}
-
-	}
-
-	private static void handleCreateDabase() throws IOException {
-		System.out.println("Introduceti comanda de creare a bazei de date!\n");
-		String line = br.readLine();
-		if (matchesPattern(Patterns.CREATE_DB.getPattern(), line)) {
-			outToServer.writeBytes(line+"\n");
-			String response = inFromServer.readLine();
-			System.out.println(response +"\n");
-			
-		} else {
-			System.out.println("Please verify your query!\n");
-		}
-
-	}
-
-	private static void displayMenu() {
-		System.out.println("Optiuni disponibile:\n");
-
-		System.out.println("1.Crearea unei baze de date.\n2.Stergerea unei baze de date.\n");
-		System.out.println("3.Crearea unui tabel.\n4.Stergerea unui tabel.\n");
-
-		System.out.println("0.Iesire\n");
-
+	private static void displayHelp() {
+		System.out.println("CREATE DATABASE database_name");
+		System.out.println("DROP DATABASE database_name");
+		System.out.println("CREATE TABLE table_name (column_name [VARCHAR(10) | NUMBER] [,column_name [VARCHAR(10)|NUMBER]])");
+		System.out.println("DROP TABLE table_name");
+		System.out.println("SET SCHEMA schema_name");
+		System.out.println("CREATE INDEX index_name ON table_name (column_name [, column_name])");
+		System.out.println("EXIT");
 	}
 
 	private static boolean matchesPattern(Pattern pattern, String input) {
