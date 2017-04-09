@@ -9,8 +9,8 @@ public enum Patterns {
 	DROP_TABLE("^DROP TABLE [A-Z_a-z]+.[A-Z_a-z]+$"),
 	SET_SCHEMA("^SET SCHEMA [A-Z_a-z0-9]+$"),
 	CREATE_INDEX("^CREATE *(UNIQUE)? INDEX [A-Z_a-z]+ ON [A-Z_a-z]+ +\\( *[A-Z_a-z]+ *(, *[A-Z_a-z]+ *)*\\)$"),
-	INSERT_ROW(".*"),
-	DELETE_ROW(".*");
+	INSERT_ROW("INSERT INTO [A-Z_a-z]+ +\\(([A-Z_a-z0-9]+)+( *, *[A-Z_a-z0-9]+)*\\) +VALUES +\\(([A-Z_a-z0-9]+)+( *, *[A-Z_a-z0-9]+)*\\)"),
+	DELETE_ROW("DELETE FROM [A-Z_a-z]+ +WHERE +.+");
 	private String pattern;
 	private Patterns(String pattern){
 		this.pattern = pattern;

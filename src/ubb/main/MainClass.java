@@ -59,10 +59,10 @@ public class MainClass {
 				case "CREATE INDEX":
 					handleRequest(Patterns.CREATE_INDEX, line);
 					break;
-				case "INSERT":
+				case "INSERT INTO":
 					handleRequest(Patterns.INSERT_ROW, line);
 					break;
-				case "DELETE":
+				case "DELETE FROM":
 					handleRequest(Patterns.DELETE_ROW, line);
 					break;
 				case "HELP":
@@ -105,6 +105,8 @@ public class MainClass {
 		System.out.println("DROP TABLE table_name");
 		System.out.println("SET SCHEMA schema_name");
 		System.out.println("CREATE INDEX index_name ON table_name (column_name [, column_name])");
+		System.out.println("INSERT INTO table_name (column1, column2, ... ) VALUES (value-for-column1, value-for-column2, ... )");
+		System.out.println("DELETE FROM table_name WHERE where_condition");
 		System.out.println("EXIT");
 	}
 
