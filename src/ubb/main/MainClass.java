@@ -35,39 +35,29 @@ public class MainClass {
 				line = br.readLine();
 				line = line.toUpperCase();
 				tokens = line.split(" +");
-				String option = tokens[0] + (tokens.length > 1 ? " " + tokens[1] : "");
+				String option = tokens[0];
 				switch (option) {
 				case "EXIT":
 					run = false;
 					socket.close();
 					break;
-				case "CREATE DATABASE":
-					handleRequest(Patterns.CREATE_DB, line);
+				case "CREATE":
+					handleCreate(line);
 					break;
-				case "DROP DATABASE":
-					handleRequest(Patterns.DROP_DB, line);
+				case "DROP":
+					handleDrop(line);
 					break;
-				case "CREATE TABLE":
-					handleRequest(Patterns.CREATE_TABLE, line);
-					break;
-				case "DROP TABLE":
-					handleRequest(Patterns.DROP_TABLE, line);
-					break;
-				case "SET SCHEMA":
+				case "SET":
 					handleRequest(Patterns.SET_SCHEMA, line);
 					break;
-				case "CREATE INDEX":
-					handleRequest(Patterns.CREATE_INDEX, line);
-					break;
-				case "INSERT INTO":
+				case "INSERT":
 					handleRequest(Patterns.INSERT_ROW, line);
 					break;
-				case "DELETE FROM":
+				case "DELETE":
 					handleRequest(Patterns.DELETE_ROW, line);
 					break;
-				case "SELECT *":
-					handleRequest(Patterns.SELECT, line);
-				break;
+				case "SELECT":
+					handleSelect(line);
 				case "HELP":
 					displayHelp();
 					break;
@@ -81,6 +71,51 @@ public class MainClass {
 
 		}
 
+	}
+
+	private static void handleSelect(String line) {
+		System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
+		
+	}
+
+	private static void handleDrop(String line) throws IOException {
+		String[] tokens = line.split(" ");
+		String object = tokens[1];
+		switch (object) {
+		case "DATABASE":
+			handleRequest(Patterns.DROP_DB, line);
+			break;
+		case "TABLE":
+			handleRequest(Patterns.DROP_TABLE, line);
+			break;
+		default:
+			System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
+			break;
+		}
+		
+	}
+
+	private static void handleCreate(String line) throws IOException {
+		String[] tokens = line.split(" ");
+		String object = tokens[1];
+		switch (object) {
+		case "DATABASE":
+			handleRequest(Patterns.CREATE_DB, line);
+			break;
+		case "TABLE":
+			handleRequest(Patterns.CREATE_TABLE, line);
+			break;
+		case "INDEX":
+			handleRequest(Patterns.CREATE_INDEX, line);
+			break;
+		case "UNIQUE":
+			handleRequest(Patterns.CREATE_INDEX, line);
+			break;
+		default:
+			System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
+			break;
+		}
+		
 	}
 
 	private static void initializeSocket() throws UnknownHostException, IOException {
