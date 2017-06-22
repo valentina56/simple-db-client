@@ -58,6 +58,7 @@ public class MainClass {
 					break;
 				case "SELECT":
 					handleSelect(line);
+					break;
 				case "HELP":
 					displayHelp();
 					break;
@@ -73,9 +74,17 @@ public class MainClass {
 
 	}
 
-	private static void handleSelect(String line) {
-		System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
-		
+	private static void handleSelect(String line) throws IOException {
+		String[] tokens = line.split(" ");
+		String object = tokens[1];
+		switch (object){
+		case "*":
+			handleSelectRequest(Patterns.SELECT_ALL, line);
+			break;
+		default:
+			System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
+			break;
+		}
 	}
 
 	private static void handleDrop(String line) throws IOException {
@@ -129,6 +138,28 @@ public class MainClass {
 			outToServer.writeBytes(line + '\n');
 			String response = inFromServer.readLine();
 			System.out.println(response + '\n');
+		}else{
+			int errorIndex = LastMatch.indexOfLastMatch(pattern.getPattern(), line);
+			System.out.println("Error at index: " + errorIndex);
+			System.out.println(line.substring(errorIndex));
+		}
+	}
+	
+	private static void handleSelectRequest(Patterns pattern, String line) throws IOException {
+		if(matchesPattern(pattern.getPattern(), line)){
+			outToServer.writeBytes(line + '\n');
+			String response ="";
+			while(true){
+				response = inFromServer.readLine();
+				String[] lines = response.split("/");
+				for(String l: lines){
+				l=l.replaceAll("#", " ");
+				if(l.equals("end"))
+					return;
+				else
+				System.out.println(l);
+				}
+			}
 		}else{
 			int errorIndex = LastMatch.indexOfLastMatch(pattern.getPattern(), line);
 			System.out.println("Error at index: " + errorIndex);
