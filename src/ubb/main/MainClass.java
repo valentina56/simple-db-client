@@ -69,9 +69,7 @@ public class MainClass {
 			} catch (IOException e) {
 				System.out.println("Communication with server is broken: " + e.getMessage());
 			}
-
 		}
-
 	}
 
 	private static void handleSelect(String line) throws IOException {
@@ -82,7 +80,7 @@ public class MainClass {
 			handleSelectRequest(Patterns.SELECT_ALL, line);
 			break;
 		default:
-			System.out.println("Unknown syntax. Please use HELP to see the syntax.\n");
+			handleSelectRequest(Patterns.SELECT_PROJECTION, line);
 			break;
 		}
 	}

@@ -11,13 +11,14 @@ public enum Patterns {
 	CREATE_INDEX("^CREATE *(UNIQUE)? INDEX [A-Z_a-z]+ ON [A-Z_a-z]+ +\\( *[A-Z_a-z]+ *(, *[A-Z_a-z]+ *)*\\)$"),
 	INSERT_ROW("INSERT INTO [A-Z_a-z]+ +\\(([A-Z_a-z0-9]+)+( *, *[A-Z_a-z0-9]+)*\\) +VALUES +\\(([A-Z_a-z0-9]+)+( *, *[A-Z_a-z0-9]+)*\\)"),
 	DELETE_ROW("DELETE FROM [A-Z_a-z]+ +WHERE +.+"),
-	SELECT_ALL("SELECT \\* FROM [A-Z_a-z]+ [A-Za-z0-9]*( JOIN [A-Z_a-z0-9]+ [A-Za-z0-9]+ ON [A-Za-z0-9]+\\.[A-Z_a-z0-9]+=[A-Za-z0-9]+\\.[A-Z_a-z0-9]+)*( +WHERE +[A-Z_a-z0-9]+(<|>|=|!=)[A-Z_a-z0-9]+( AND [A-Z_a-z0-9]+(<|>|=|!=)[A-Z_a-z0-9]+)*)?");
-
+	SELECT_ALL("SELECT \\* FROM [A-Z_a-z]+ [A-Za-z0-9]*( JOIN [A-Z_a-z0-9]+ [A-Za-z0-9]+ ON [A-Za-z0-9]+\\.[A-Z_a-z0-9]+=[A-Za-z0-9]+\\.[A-Z_a-z0-9]+)*( +WHERE +[A-Z_a-z0-9]+(<|>|=|!=)[A-Z_a-z0-9]+( AND [A-Z_a-z0-9]+(<|>|=|!=)[A-Z_a-z0-9]+)*)?"),
+	SELECT_PROJECTION("SELECT [A-Z_a-z0-9]+(,[A-Z_a-z0-9]+)* FROM [A-Z_a-z]+ [A-Za-z]+( JOIN [A-Z_a-z0-9]+ [A-Za-z0-9]+ ON [A-Za-z0-9]+\\.[A-Z_a-z0-9]+=[A-Za-z0-9]+\\.[A-Z_a-z0-9]+)*( +WHERE +[A-Z_a-z0-9]+(<|>|=|!=)[A-Z_a-z0-9]+( AND [A-Z_a-z0-9]+(<|>|=|!=)[A-Z_a-z0-9]+)*)?");
+	
 	private String pattern;
 	private Patterns(String pattern){
 		this.pattern = pattern;
 	}
-
+	
 	public Pattern getPattern(){
 		return Pattern.compile(pattern);
 	}
